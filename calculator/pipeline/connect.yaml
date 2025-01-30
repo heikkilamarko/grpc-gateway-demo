@@ -1,0 +1,74 @@
+input:
+  http_server:
+    path: /v1/calculator
+    timeout: 10s
+    sync_response:
+      status: ${!json("status")}
+      headers:
+        Content-Type: application/json
+
+pipeline:
+  processors:
+    - try:
+        - mapping: meta error_status = 400
+
+        - json_schema:
+            schema_path: file:///json_schema.json
+
+        - mapping: meta error_status = 500
+
+        - branch:
+            request_map: |
+              root.a = this.a
+              root.b = this.b
+            processors:
+              - http:
+                  url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/add
+                  verb: POST
+            result_map: |
+              root.add_result = this.result
+
+        - branch:
+            request_map: |
+              root.a = this.a
+              root.b = this.b
+            processors:
+              - http:
+                  url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/subtract
+                  verb: POST
+            result_map: |
+              root.subtract_result = this.result
+
+        - mapping: |
+            root = this
+            root.processed_by = "calculator-pipeline"
+            root.processed_at = now()
+
+output:
+  switch:
+    cases:
+      - check: errored()
+        output:
+          sync_response: {}
+          processors:
+            - mapping: |
+                root.status = @error_status | 500
+                root.error = if @error_status == 400 { error() } else { "internal error" }
+
+      - output:
+          sync_response: {}
+          processors:
+            - mapping: |
+                root = this        
+                root.status = 200
+
+http:
+  address: ${HTTP_ADDRESS}
+
+logger:
+  level: ${LOG_LEVEL:INFO}
+  format: logfmt
+  static_fields:
+    service: calculator-pipeline
+
+shutdown_delay: 5s

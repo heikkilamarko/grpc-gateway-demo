@@ -1,0 +1,70 @@
+@base_url = http://localhost:8000/v1/calculator
+
+### 🟢 valid request
+
+POST {{base_url}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "a": 100,
+    "b": 20
+}
+
+### 🔴 property b missing
+
+POST {{base_url}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "a": 100
+}
+
+### 🔴 properties a and b missing
+
+POST {{base_url}}
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+### 🔴 additional property c is not allowed
+
+POST {{base_url}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "a": 100,
+    "b": 20,
+    "c": 30
+}
+
+### 🔴 property a is not a number
+
+POST {{base_url}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "a": "xyz",
+    "b": 20
+}
+
+### 🔴 request body is not in json format
+
+POST {{base_url}}
+Content-Type: application/json
+Accept: application/json
+
+<xml>
+    <a>100</a>
+    <b>20</b>
+</xml>
+
+### 🔴 request body is empty
+
+POST {{base_url}}
+Content-Type: application/json
+Accept: application/json

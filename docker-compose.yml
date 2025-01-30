@@ -1,0 +1,78 @@
+services:
+  calculator-service:
+    build:
+      context: ./calculator
+      dockerfile: Dockerfile.service
+    restart: unless-stopped
+    env_file:
+      - ./calculator/env/calculator-service.env
+    networks:
+      - grpc-gateway-demo
+
+  calculator-gateway:
+    build:
+      context: ./calculator
+      dockerfile: Dockerfile.gateway
+    restart: unless-stopped
+    env_file:
+      - ./calculator/env/calculator-gateway.env
+    networks:
+      - grpc-gateway-demo
+    depends_on:
+      - calculator-service
+
+  calculator-pipeline:
+    build: ./calculator/pipeline
+    restart: unless-stopped
+    env_file:
+      - ./calculator/env/calculator-pipeline.env
+    ports:
+      - "8000:8080"
+    networks:
+      - grpc-gateway-demo
+    depends_on:
+      - calculator-gateway
+
+  postgres:
+    build: ./infra/postgres
+    restart: unless-stopped
+    env_file:
+      - ./infra/env/postgres.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - grpc-gateway-demo
+
+  prometheus:
+    build: ./infra/prometheus
+    restart: unless-stopped
+    volumes:
+      - prometheus:/prometheus
+    networks:
+      - grpc-gateway-demo
+
+  grafana:
+    build: ./infra/grafana
+    restart: unless-stopped
+    env_file:
+      - ./infra/env/grafana.env
+    volumes:
+      - grafana:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - grpc-gateway-demo
+    depends_on:
+      - postgres
+      - prometheus
+
+networks:
+  grpc-gateway-demo:
+    name: grpc-gateway-demo
+
+volumes:
+  postgres:
+  prometheus:
+  grafana:

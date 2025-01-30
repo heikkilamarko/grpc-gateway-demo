@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package calculator;
+
+option go_package = "calculator-demo/proto/calculator";
+
+import "google/api/annotations.proto";
+
+service Calculator {
+  rpc Add (AddRequest) returns (AddReply) {
+    option (google.api.http) = {
+      post: "/v1/calculator/add"
+      body: "*"
+    };
+  }
+
+  rpc Subtract (SubtractRequest) returns (SubtractReply) {
+    option (google.api.http) = {
+      post: "/v1/calculator/subtract"
+      body: "*"
+    };
+  }
+}
+
+message AddRequest {
+  float a = 1;
+  float b = 2;
+}
+
+message AddReply {
+  float result = 1;
+}
+
+message SubtractRequest {
+  float a = 1;
+  float b = 2;
+}
+
+message SubtractReply {
+  float result = 1;
+}
