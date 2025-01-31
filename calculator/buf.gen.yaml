@@ -2,19 +2,24 @@ version: v2
 
 managed:
   enabled: true
+  override:
+    - file_option: go_package
+      value: calculator-demo/proto/calculator
 
 plugins:
-  - remote: buf.build/protocolbuffers/go
+  - local: protoc-gen-go
     out: proto
     opt: paths=source_relative
 
-  - remote: buf.build/grpc/go
+  - local: protoc-gen-go-grpc
     out: proto
     opt: paths=source_relative
 
-  - remote: buf.build/grpc-ecosystem/gateway
+  - local: protoc-gen-grpc-gateway
     out: proto
-    opt: paths=source_relative
+    opt:
+      - paths=source_relative
+      - grpc_api_configuration=proto/calculator/calculator.yaml
 
 inputs:
   - directory: proto

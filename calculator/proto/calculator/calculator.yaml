@@ -1,0 +1,12 @@
+type: google.api.Service
+config_version: 3
+
+http:
+  rules:
+    - selector: calculator.Calculator.Add
+      post: /v1/calculator/add
+      body: "*"
+
+    - selector: calculator.Calculator.Subtract
+      post: /v1/calculator/subtract
+      body: "*"
