@@ -4,6 +4,7 @@ import (
 	"calculator-demo/proto/calculator"
 	"context"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -29,9 +30,17 @@ func main() {
 
 	gwServer := &http.Server{
 		Addr:    addr,
-		Handler: gwmux,
+		Handler: requestLogger(gwmux),
 	}
 
 	log.Println("serving grpc gateway on " + addr)
 	log.Fatalln(gwServer.ListenAndServe())
+}
+
+func requestLogger(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hostname, _ := os.Hostname()
+		slog.Info("request", "path", r.URL.Path, "hostname", hostname)
+		h.ServeHTTP(w, r)
+	})
 }

@@ -25,3 +25,9 @@
 		reverse_proxy http://calculator-pipeline-1:8080 http://calculator-pipeline-2:8080
 	}
 }
+
+:8081 {
+	log
+
+	reverse_proxy http://calculator-gateway-1:8080 http://calculator-gateway-2:8080
+}

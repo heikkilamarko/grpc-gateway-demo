@@ -3,7 +3,11 @@
 ## Start
 
 ```bash
-docker compose up -d --build
+docker compose build
+```
+
+```bash
+docker compose up -d
 ```
 
 ## Stop
