@@ -3,19 +3,19 @@ input:
     path: /v1/calculator
     timeout: 10s
     sync_response:
-      status: ${!json("status")}
+      status: ${!meta("http_status")}
       headers:
         Content-Type: application/json
 
 pipeline:
   processors:
     - try:
-        - mapping: meta error_status = 400
+        - mapping: meta http_status = 400
 
         - json_schema:
             schema_path: file:///json_schema.json
 
-        - mapping: meta error_status = 500
+        - mapping: meta http_status = 500
 
         - branch:
             request_map: |
@@ -26,7 +26,7 @@ pipeline:
                   url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/add
                   verb: POST
             result_map: |
-              root.add_result = this.result
+              root.results.add = this.result
 
         - branch:
             request_map: |
@@ -37,7 +37,7 @@ pipeline:
                   url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/subtract
                   verb: POST
             result_map: |
-              root.subtract_result = this.result
+              root.results.subtract = this.result
 
         - mapping: |
             root = this
@@ -52,15 +52,14 @@ output:
           sync_response: {}
           processors:
             - mapping: |
-                root.status = @error_status | 500
-                root.error = if @error_status == 400 { error() } else { "internal error" }
+                root.error = if @http_status == 400 { error() } else { "internal error" }
 
       - output:
           sync_response: {}
           processors:
             - mapping: |
                 root = this        
-                root.status = 200
+                meta http_status = 200
 
 http:
   address: ${HTTP_ADDRESS}
