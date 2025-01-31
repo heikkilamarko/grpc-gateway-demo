@@ -18,9 +18,9 @@ docker compose down -v
 | ---------- | ---------------- |
 | calculator | calculator.http  |
 
-## Monitoring
+## Grafana
 
-http://localhost:3000
+http://localhost:8000/grafana
 
 | Username | Password |
 | -------- | -------- |

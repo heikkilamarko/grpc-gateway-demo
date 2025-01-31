@@ -1,0 +1,27 @@
+{
+	admin off
+	auto_https off
+	skip_install_trust
+
+	log {
+		level {$LOG_LEVEL}
+		format json {
+			time_format "rfc3339_nano"
+		}
+	}
+}
+
+:8080 {
+	log
+
+	@grafana {
+		path /grafana /grafana/*
+	}
+	handle @grafana {
+		reverse_proxy http://grafana:3000
+	}
+
+	handle {
+		reverse_proxy http://calculator-pipeline-1:8080 http://calculator-pipeline-2:8080
+	}
+}

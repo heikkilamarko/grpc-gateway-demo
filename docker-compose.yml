@@ -21,13 +21,21 @@ services:
     depends_on:
       - calculator-service
 
-  calculator-pipeline:
+  calculator-pipeline-1:
     build: ./calculator/pipeline
     restart: unless-stopped
     env_file:
       - ./calculator/env/calculator-pipeline.env
-    ports:
-      - "8000:8080"
+    networks:
+      - grpc-gateway-demo
+    depends_on:
+      - calculator-gateway
+
+  calculator-pipeline-2:
+    build: ./calculator/pipeline
+    restart: unless-stopped
+    env_file:
+      - ./calculator/env/calculator-pipeline.env
     networks:
       - grpc-gateway-demo
     depends_on:
@@ -60,19 +68,32 @@ services:
       - ./infra/env/grafana.env
     volumes:
       - grafana:/var/lib/grafana
-    ports:
-      - "3000:3000"
     networks:
       - grpc-gateway-demo
     depends_on:
       - postgres
       - prometheus
 
+  proxy:
+    build: ./infra/proxy
+    restart: unless-stopped
+    env_file:
+      - ./infra/env/proxy.env
+    ports:
+      - "8000:8080"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - grpc-gateway-demo
+
 networks:
   grpc-gateway-demo:
     name: grpc-gateway-demo
 
 volumes:
+  caddy_data:
+  caddy_config:
   postgres:
   prometheus:
   grafana:

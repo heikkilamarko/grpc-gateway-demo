@@ -41,7 +41,7 @@ pipeline:
 
         - mapping: |
             root = this
-            root.processed_by = "calculator-pipeline"
+            root.processed_by = "[%s] calculator-pipeline".format(hostname())
             root.processed_at = now()
 
 output:
