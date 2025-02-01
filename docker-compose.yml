@@ -33,9 +33,9 @@ services:
     depends_on:
       - calculator-service
 
-  calculator-pipeline-1:
-    image: calculator-pipeline
-    build: ./calculator/pipeline
+  calculator-pipeline-http-request-reply-1:
+    image: calculator-pipeline-http-request-reply
+    build: ./calculator/pipelines/http_request_reply
     restart: unless-stopped
     env_file:
       - ./calculator/env/calculator-pipeline.env
@@ -45,8 +45,20 @@ services:
       - calculator-gateway-1
       - calculator-gateway-2
 
-  calculator-pipeline-2:
-    image: calculator-pipeline
+  calculator-pipeline-http-request-reply-2:
+    image: calculator-pipeline-http-request-reply
+    restart: unless-stopped
+    env_file:
+      - ./calculator/env/calculator-pipeline.env
+    networks:
+      - grpc-gateway-demo
+    depends_on:
+      - calculator-gateway-1
+      - calculator-gateway-2
+
+  calculator-pipeline-scheduled-http-request:
+    image: calculator-pipeline-scheduled-http-request
+    build: ./calculator/pipelines/scheduled_http_request
     restart: unless-stopped
     env_file:
       - ./calculator/env/calculator-pipeline.env
@@ -62,6 +74,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./infra/env/postgres.env
+    ports:
+      - "5432:5432"
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:
@@ -90,12 +104,12 @@ services:
       - postgres
       - prometheus
 
-  proxy:
-    image: proxy
-    build: ./infra/proxy
+  caddy:
+    image: caddy
+    build: ./infra/caddy
     restart: unless-stopped
     env_file:
-      - ./infra/env/proxy.env
+      - ./infra/env/caddy.env
     ports:
       - "8000:8080"
     volumes:
@@ -111,8 +125,8 @@ networks:
     name: grpc-gateway-demo
 
 volumes:
-  caddy_data:
-  caddy_config:
   postgres:
   prometheus:
   grafana:
+  caddy_data:
+  caddy_config:

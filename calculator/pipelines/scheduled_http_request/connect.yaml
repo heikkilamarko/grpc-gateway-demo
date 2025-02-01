@@ -1,0 +1,59 @@
+input:
+  generate:
+    mapping: root = {}
+    interval: 0/5 * * * * *
+
+pipeline:
+  processors:
+    - try:
+        - mapping: |
+            root = this
+            root.a = 75
+            root.b = 25
+
+        - mapping: root = if random_int() % 4 == 0 { throw("simulated error") }
+
+        - branch:
+            request_map: |
+              root.a = this.a
+              root.b = this.b
+            processors:
+              - http:
+                  url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/add
+                  verb: POST
+            result_map: |
+              root.results.add = this.result
+
+        - mapping: |
+            root = this
+            root.processed_by = "[%s] calculator-pipeline-scheduled-http-request".format(hostname())
+            root.processed_at = now()
+
+output:
+  switch:
+    cases:
+      - check: errored()
+        output:
+          sql_raw:
+            driver: postgres
+            dsn: ${POSTGRES_CONNECTIONSTRING}
+            query: INSERT INTO demo.error_requests (error_message, data) VALUES ($1, $2);
+            args_mapping: root = [error(), content()]
+
+      - output:
+          sql_raw:
+            driver: postgres
+            dsn: ${POSTGRES_CONNECTIONSTRING}
+            query: INSERT INTO demo.success_requests (data) VALUES ($1);
+            args_mapping: root = [content()]
+
+http:
+  address: ${HTTP_ADDRESS}
+
+logger:
+  level: ${LOG_LEVEL:INFO}
+  format: logfmt
+  static_fields:
+    service: calculator-pipeline-scheduled-http-request
+
+shutdown_delay: 5s

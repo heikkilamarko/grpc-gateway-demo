@@ -6,5 +6,6 @@ scrape_configs:
   - job_name: grpc-gateway-demo
     static_configs:
       - targets:
-          - calculator-pipeline-1:8080
-          - calculator-pipeline-2:8080
+          - calculator-pipeline-http-request-reply-1:8080
+          - calculator-pipeline-http-request-reply-2:8080
+          - calculator-pipeline-scheduled-http-request:8080

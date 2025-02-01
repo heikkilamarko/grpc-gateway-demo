@@ -41,7 +41,7 @@ pipeline:
 
         - mapping: |
             root = this
-            root.processed_by = "[%s] calculator-pipeline".format(hostname())
+            root.processed_by = "[%s] calculator-pipeline-http-request-reply".format(hostname())
             root.processed_at = now()
 
 output:
@@ -68,6 +68,6 @@ logger:
   level: ${LOG_LEVEL:INFO}
   format: logfmt
   static_fields:
-    service: calculator-pipeline
+    service: calculator-pipeline-http-request-reply
 
 shutdown_delay: 5s
