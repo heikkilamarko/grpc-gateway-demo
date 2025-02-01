@@ -28,7 +28,7 @@ output:
   processors:
     - mapping: |
         root = this
-        root.processed_by = "[%s] calculator-pipeline-http-request-scheduled".format(hostname())
+        root.processed_by = "[%s] calculator-pipeline-cron-request".format(hostname())
         root.processed_at = now()
 
   switch:
@@ -55,6 +55,6 @@ logger:
   level: ${LOG_LEVEL:INFO}
   format: logfmt
   static_fields:
-    service: calculator-pipeline-http-request-scheduled
+    service: calculator-pipeline-cron-request
 
 shutdown_delay: 5s

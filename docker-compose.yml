@@ -56,9 +56,9 @@ services:
       - calculator-gateway-1
       - calculator-gateway-2
 
-  calculator-pipeline-http-request-scheduled:
-    image: calculator-pipeline-http-request-scheduled
-    build: ./calculator/pipelines/http_request_scheduled
+  calculator-pipeline-cron-request:
+    image: calculator-pipeline-cron-request
+    build: ./calculator/pipelines/cron_request
     restart: unless-stopped
     env_file:
       - ./calculator/env/calculator-pipeline.env
