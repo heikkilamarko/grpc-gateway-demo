@@ -3,7 +3,6 @@ package main
 import (
 	"calculator-demo/proto/calculator"
 	"context"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -16,25 +15,31 @@ import (
 func main() {
 	conn, err := grpc.NewClient(os.Getenv("CALCULATOR_SERVICE_ADDRESS"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalln("dial server", err)
+		slog.Error("connect to calculator service", "error", err)
+		os.Exit(1)
 	}
 
 	gwmux := runtime.NewServeMux()
 
 	err = calculator.RegisterCalculatorHandler(context.Background(), gwmux, conn)
 	if err != nil {
-		log.Fatalln("register gateway", err)
+		slog.Error("register calculator handler", "error", err)
+		os.Exit(1)
 	}
 
 	addr := os.Getenv("SERVER_ADDRESS")
 
-	gwServer := &http.Server{
+	server := &http.Server{
 		Addr:    addr,
 		Handler: requestLogger(gwmux),
 	}
 
-	log.Println("serving grpc gateway on " + addr)
-	log.Fatalln(gwServer.ListenAndServe())
+	slog.Info("listen", "addr", addr)
+
+	if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		slog.Error("listen", "error", err)
+		os.Exit(1)
+	}
 }
 
 func requestLogger(h http.Handler) http.Handler {

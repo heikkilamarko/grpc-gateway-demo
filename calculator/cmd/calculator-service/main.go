@@ -2,7 +2,7 @@ package main
 
 import (
 	"calculator-demo/proto/calculator"
-	"log"
+	"log/slog"
 	"net"
 	"os"
 
@@ -12,15 +12,20 @@ import (
 func main() {
 	addr := os.Getenv("SERVER_ADDRESS")
 
-	l, err := net.Listen("tcp", addr)
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Fatalln("listen:", err)
+		slog.Error("create listener", "error", err)
+		os.Exit(1)
 	}
 
-	s := grpc.NewServer()
+	server := grpc.NewServer()
 
-	calculator.RegisterCalculatorServer(s, &server{})
+	calculator.RegisterCalculatorServer(server, &calculatorServer{})
 
-	log.Println("serving grpc on " + addr)
-	log.Fatalln(s.Serve(l))
+	slog.Info("listen", "addr", addr)
+
+	if err := server.Serve(listener); err != nil {
+		slog.Error("listen", "error", err)
+		os.Exit(1)
+	}
 }
