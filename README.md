@@ -16,11 +16,12 @@ docker compose up -d
 docker compose down -v
 ```
 
-## Example HTTP Requests
+## Example Requests
 
-| Demo       | Example Requests |
-| ---------- | ---------------- |
-| calculator | calculator.http  |
+| Demo       | Protocol | Example Requests     |
+| ---------- | -------- | -------------------- |
+| calculator | HTTP     | calculator_http.http |
+| calculator | NATS     | calculator_nats.sh   |
 
 ## Grafana
 

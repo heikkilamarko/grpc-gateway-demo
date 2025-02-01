@@ -22,7 +22,7 @@
 	}
 
 	handle {
-		reverse_proxy http://calculator-pipeline-http-request-reply-1:8080 http://calculator-pipeline-http-request-reply-2:8080
+		reverse_proxy http://calculator-pipeline-http-request-1:8080 http://calculator-pipeline-http-request-2:8080
 	}
 }
 

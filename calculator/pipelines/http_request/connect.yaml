@@ -39,27 +39,19 @@ pipeline:
             result_map: |
               root.results.subtract = this.result
 
-        - mapping: |
-            root = this
-            root.processed_by = "[%s] calculator-pipeline-http-request-reply".format(hostname())
-            root.processed_at = now()
-
 output:
-  switch:
-    cases:
-      - check: errored()
-        output:
-          sync_response: {}
-          processors:
-            - mapping: |
-                root.error = if @http_status == 400 { error() } else { "internal error" }
+  processors:
+    - mapping: |
+        if errored() {
+          root.error = if @http_status == 400 { error() } else { "internal error" }
+        } else {
+          root = this
+          meta http_status = 200
+        }
+        root.processed_by = "[%s] calculator-pipeline-http-request".format(hostname())
+        root.processed_at = now()
 
-      - output:
-          sync_response: {}
-          processors:
-            - mapping: |
-                root = this        
-                meta http_status = 200
+  sync_response: {}
 
 http:
   address: ${HTTP_ADDRESS}
@@ -68,6 +60,6 @@ logger:
   level: ${LOG_LEVEL:INFO}
   format: logfmt
   static_fields:
-    service: calculator-pipeline-http-request-reply
+    service: calculator-pipeline-http-request
 
 shutdown_delay: 5s

@@ -33,9 +33,9 @@ services:
     depends_on:
       - calculator-service
 
-  calculator-pipeline-http-request-reply-1:
-    image: calculator-pipeline-http-request-reply
-    build: ./calculator/pipelines/http_request_reply
+  calculator-pipeline-http-request-1:
+    image: calculator-pipeline-http-request
+    build: ./calculator/pipelines/http_request
     restart: unless-stopped
     env_file:
       - ./calculator/env/calculator-pipeline.env
@@ -45,8 +45,8 @@ services:
       - calculator-gateway-1
       - calculator-gateway-2
 
-  calculator-pipeline-http-request-reply-2:
-    image: calculator-pipeline-http-request-reply
+  calculator-pipeline-http-request-2:
+    image: calculator-pipeline-http-request
     restart: unless-stopped
     env_file:
       - ./calculator/env/calculator-pipeline.env
@@ -56,9 +56,9 @@ services:
       - calculator-gateway-1
       - calculator-gateway-2
 
-  calculator-pipeline-scheduled-http-request:
-    image: calculator-pipeline-scheduled-http-request
-    build: ./calculator/pipelines/scheduled_http_request
+  calculator-pipeline-http-request-scheduled:
+    image: calculator-pipeline-http-request-scheduled
+    build: ./calculator/pipelines/http_request_scheduled
     restart: unless-stopped
     env_file:
       - ./calculator/env/calculator-pipeline.env
@@ -67,6 +67,27 @@ services:
     depends_on:
       - calculator-gateway-1
       - calculator-gateway-2
+
+  calculator-pipeline-nats-request:
+    image: calculator-pipeline-nats-request
+    build: ./calculator/pipelines/nats_request
+    restart: unless-stopped
+    env_file:
+      - ./calculator/env/calculator-pipeline.env
+    networks:
+      - grpc-gateway-demo
+    depends_on:
+      - nats
+      - calculator-gateway-1
+      - calculator-gateway-2
+
+  nats:
+    image: nats
+    restart: unless-stopped
+    ports:
+      - "4222:4222"
+    networks:
+      - grpc-gateway-demo
 
   postgres:
     image: postgres

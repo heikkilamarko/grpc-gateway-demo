@@ -8,8 +8,8 @@ pipeline:
     - try:
         - mapping: |
             root = this
-            root.a = 75
-            root.b = 25
+            root.a = random_int(timestamp_unix_nano(), 0, 100)
+            root.b = random_int(timestamp_unix_nano(), 0, 100)
 
         - mapping: root = if random_int() % 4 == 0 { throw("simulated error") }
 
@@ -22,14 +22,15 @@ pipeline:
                   url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/add
                   verb: POST
             result_map: |
-              root.results.add = this.result
-
-        - mapping: |
-            root = this
-            root.processed_by = "[%s] calculator-pipeline-scheduled-http-request".format(hostname())
-            root.processed_at = now()
+              root.result = this.result
 
 output:
+  processors:
+    - mapping: |
+        root = this
+        root.processed_by = "[%s] calculator-pipeline-http-request-scheduled".format(hostname())
+        root.processed_at = now()
+
   switch:
     cases:
       - check: errored()
@@ -54,6 +55,6 @@ logger:
   level: ${LOG_LEVEL:INFO}
   format: logfmt
   static_fields:
-    service: calculator-pipeline-scheduled-http-request
+    service: calculator-pipeline-http-request-scheduled
 
 shutdown_delay: 5s
