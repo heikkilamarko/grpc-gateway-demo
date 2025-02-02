@@ -6,6 +6,7 @@ scrape_configs:
   - job_name: grpc-gateway-demo
     static_configs:
       - targets:
+          - caddy:8082
           - calculator-pipeline-http-request-1:8080
           - calculator-pipeline-http-request-2:8080
           - calculator-pipeline-cron-request:8080

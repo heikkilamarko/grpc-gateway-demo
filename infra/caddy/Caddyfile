@@ -3,6 +3,10 @@
 	auto_https off
 	skip_install_trust
 
+	servers {
+		metrics
+	}
+
 	log {
 		level {$LOG_LEVEL}
 		format json {
@@ -14,20 +18,32 @@
 :8080 {
 	log
 
+	@calculator_pipeline {
+		path /v1/calculator /v1/calculator/*
+	}
+	handle @calculator_pipeline {
+		reverse_proxy http://calculator-pipeline-http-request-1:8080 http://calculator-pipeline-http-request-2:8080
+	}
+
 	@grafana {
 		path /grafana /grafana/*
 	}
 	handle @grafana {
 		reverse_proxy http://grafana:3000
 	}
-
-	handle {
-		reverse_proxy http://calculator-pipeline-http-request-1:8080 http://calculator-pipeline-http-request-2:8080
-	}
 }
 
 :8081 {
 	log
 
-	reverse_proxy http://calculator-gateway-1:8080 http://calculator-gateway-2:8080
+	@calculator_gateway {
+		path /v1/calculator /v1/calculator/*
+	}
+	handle @calculator_gateway {
+		reverse_proxy http://calculator-gateway-1:8080 http://calculator-gateway-2:8080
+	}
+}
+
+:8082 {
+	metrics
 }
