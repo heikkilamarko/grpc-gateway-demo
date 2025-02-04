@@ -8,15 +8,19 @@ input:
 pipeline:
   processors:
     - try:
+        - mapping: meta response_status = 400
+
         - mapping: |
             meta calculator_operation = @nats_subject.split(".").index(-1)
 
             root = if !["add","subtract"].contains(@calculator_operation) {
-              throw("invalid operation, supported operations: 'add', 'subtract'")
+              throw("unsupported operation, supported operations: add, subtract")
             }
 
         - json_schema:
             schema_path: file:///json_schema.json
+
+        - mapping: meta response_status = 500
 
         - branch:
             request_map: |
@@ -26,20 +30,25 @@ pipeline:
               - http:
                   url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/${!@calculator_operation}
                   verb: POST
+                  headers:
+                    Content-Type: application/json
             result_map: |
               root.result = this.result
 
-output:
-  processors:
+        - mapping: meta response_status = 200
+
     - mapping: |
         if errored() {
-          root.error = error()
+          root.error.code = @response_status
+          root.error.message = if @response_status == 400 { error() } else { "internal error" }
         } else {
-          root = this
+          root.result = this.result
         }
-        root.processed_by = "[%s] calculator-pipeline-nats-request".format(hostname())
+        root.processed_on = hostname()
         root.processed_at = now()
+        root.processed_by = "calculator-pipeline-nats-request"
 
+output:
   nats:
     urls: [nats://nats:4222]
     subject: ${!@nats_reply_subject}

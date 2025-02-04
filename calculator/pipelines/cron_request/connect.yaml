@@ -11,8 +11,6 @@ pipeline:
             root.a = random_int(timestamp_unix_nano(), 0, 100)
             root.b = random_int(timestamp_unix_nano(), 0, 100)
 
-        - mapping: root = if random_int() % 4 == 0 { throw("simulated error") }
-
         - branch:
             request_map: |
               root.a = this.a
@@ -21,16 +19,33 @@ pipeline:
               - http:
                   url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/add
                   verb: POST
+                  headers:
+                    Content-Type: application/json
             result_map: |
               root.result = this.result
 
-output:
-  processors:
-    - mapping: |
-        root = this
-        root.processed_by = "[%s] calculator-pipeline-cron-request".format(hostname())
-        root.processed_at = now()
+        - branch:
+            request_map: root = this
+            processors:
+              - http:
+                  url: ${HTTPBIN_ADDRESS}/unstable
+                  verb: POST
+                  headers:
+                    Content-Type: application/json
+                  retries: 1
 
+    - mapping: |
+        if errored() {
+          root.error.code = 500
+          root.error.message = error()
+        } else {
+          root.result = this.result
+        }
+        root.processed_on = hostname()
+        root.processed_at = now()
+        root.processed_by = "calculator-pipeline-cron-request"
+
+output:
   switch:
     cases:
       - check: errored()

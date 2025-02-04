@@ -81,6 +81,12 @@ services:
       - calculator-gateway-1
       - calculator-gateway-2
 
+  httpbin:
+    image: mccutchen/go-httpbin
+    restart: unless-stopped
+    networks:
+      - grpc-gateway-demo
+
   nats:
     image: nats
     restart: unless-stopped

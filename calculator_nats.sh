@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+export NATS_TIMEOUT=20s
+
 echo ----------
 
 echo 🟢 valid add request:

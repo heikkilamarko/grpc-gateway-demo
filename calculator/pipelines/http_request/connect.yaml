@@ -3,19 +3,19 @@ input:
     path: /v1/calculator
     timeout: 10s
     sync_response:
-      status: ${!meta("http_status")}
+      status: ${!meta("response_status")}
       headers:
         Content-Type: application/json
 
 pipeline:
   processors:
     - try:
-        - mapping: meta http_status = 400
+        - mapping: meta response_status = 400
 
         - json_schema:
             schema_path: file:///json_schema.json
 
-        - mapping: meta http_status = 500
+        - mapping: meta response_status = 500
 
         - branch:
             request_map: |
@@ -25,6 +25,8 @@ pipeline:
               - http:
                   url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/add
                   verb: POST
+                  headers:
+                    Content-Type: application/json
             result_map: |
               root.results.add = this.result
 
@@ -36,21 +38,25 @@ pipeline:
               - http:
                   url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/subtract
                   verb: POST
+                  headers:
+                    Content-Type: application/json
             result_map: |
               root.results.subtract = this.result
 
-output:
-  processors:
+        - mapping: meta response_status = 200
+
     - mapping: |
         if errored() {
-          root.error = if @http_status == 400 { error() } else { "internal error" }
+          root.error.code = @response_status
+          root.error.message = if @response_status == 400 { error() } else { "internal error" }
         } else {
-          root = this
-          meta http_status = 200
+          root.results = this.results
         }
-        root.processed_by = "[%s] calculator-pipeline-http-request".format(hostname())
+        root.processed_on = hostname()
         root.processed_at = now()
+        root.processed_by = "calculator-pipeline-http-request"
 
+output:
   sync_response: {}
 
 http:
