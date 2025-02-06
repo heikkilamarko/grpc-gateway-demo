@@ -1,5 +1,13 @@
 # gRPC Gateway Demo
 
+## Install Tools
+
+```bash
+./install_tools.sh
+```
+
+Install [Buf CLI](https://buf.build/docs/installation/)
+
 ## Start
 
 ```bash

@@ -1,6 +1,6 @@
 input:
   nats:
-    urls: [nats://nats:4222]
+    urls: ["${NATS_ADDRESS}"]
     subject: calculator.v1.*
     auto_replay_nacks: false
     send_ack: false
@@ -28,7 +28,7 @@ pipeline:
               root.b = this.b
             processors:
               - http:
-                  url: ${CALCULATOR_SERVICE_ADDRESS}/v1/calculator/${!@calculator_operation}
+                  url: ${CALCULATOR_GATEWAY_ADDRESS}/v1/calculator/${!@calculator_operation}
                   verb: POST
                   headers:
                     Content-Type: application/json
@@ -50,7 +50,7 @@ pipeline:
 
 output:
   nats:
-    urls: [nats://nats:4222]
+    urls: ["${NATS_ADDRESS}"]
     subject: ${!@nats_reply_subject}
 
 http:

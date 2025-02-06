@@ -4,26 +4,26 @@ managed:
   enabled: true
   override:
     - file_option: go_package
-      value: calculator-demo/proto/calculator
+      value: calculator-demo/internal/calculator
 
 plugins:
   - local: protoc-gen-go
-    out: internal
+    out: internal/calculator
     opt: paths=source_relative
 
   - local: protoc-gen-go-grpc
-    out: internal
+    out: internal/calculator
     opt: paths=source_relative
 
   - local: protoc-gen-grpc-gateway
-    out: internal
+    out: internal/calculator
     opt:
       - paths=source_relative
-      - grpc_api_configuration=proto/calculator/calculator.yaml
+      - grpc_api_configuration=proto/calculator.yaml
 
   - local: protoc-gen-openapiv2
     out: openapi
-    opt: grpc_api_configuration=proto/calculator/calculator.yaml
+    opt: grpc_api_configuration=proto/calculator.yaml
 
 inputs:
   - directory: proto
