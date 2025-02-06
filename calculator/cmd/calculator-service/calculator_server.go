@@ -1,20 +1,20 @@
 package main
 
 import (
-	"calculator-demo/internal/calculator"
+	"calculator-demo/internal/calculator/v1"
 	"context"
 )
 
 type calculatorServer struct {
-	calculator.UnimplementedCalculatorServer
+	calculator.UnimplementedCalculatorServiceServer
 }
 
-func (s *calculatorServer) Add(_ context.Context, req *calculator.AddRequest) (*calculator.AddReply, error) {
+func (s *calculatorServer) Add(_ context.Context, req *calculator.AddRequest) (*calculator.AddResponse, error) {
 	result := req.A + req.B
-	return &calculator.AddReply{Result: result}, nil
+	return &calculator.AddResponse{Result: result}, nil
 }
 
-func (s *calculatorServer) Subtract(_ context.Context, req *calculator.SubtractRequest) (*calculator.SubtractReply, error) {
+func (s *calculatorServer) Subtract(_ context.Context, req *calculator.SubtractRequest) (*calculator.SubtractResponse, error) {
 	result := req.A - req.B
-	return &calculator.SubtractReply{Result: result}, nil
+	return &calculator.SubtractResponse{Result: result}, nil
 }

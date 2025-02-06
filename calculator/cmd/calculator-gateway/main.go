@@ -1,7 +1,8 @@
 package main
 
 import (
-	"calculator-demo/internal/calculator"
+	"calculator-demo/internal"
+	"calculator-demo/internal/calculator/v1"
 	"context"
 	"log/slog"
 	"net/http"
@@ -13,39 +14,28 @@ import (
 )
 
 func main() {
-	conn, err := grpc.NewClient(os.Getenv("CALCULATOR_SERVICE_ADDRESS"), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		slog.Error("connect to calculator service", "error", err)
+	var (
+		serverAddress            = os.Getenv("SERVER_ADDRESS")
+		calculatorServiceAddress = os.Getenv("CALCULATOR_SERVICE_ADDRESS")
+		ctx                      = context.Background()
+		mux                      = runtime.NewServeMux()
+		opts                     = []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	)
+
+	if err := calculator.RegisterCalculatorServiceHandlerFromEndpoint(ctx, mux, calculatorServiceAddress, opts); err != nil {
+		slog.Error("register calculator service handler", "error", err)
 		os.Exit(1)
 	}
-
-	gwmux := runtime.NewServeMux()
-
-	err = calculator.RegisterCalculatorHandler(context.Background(), gwmux, conn)
-	if err != nil {
-		slog.Error("register calculator handler", "error", err)
-		os.Exit(1)
-	}
-
-	addr := os.Getenv("SERVER_ADDRESS")
 
 	server := &http.Server{
-		Addr:    addr,
-		Handler: requestLogger(gwmux),
+		Addr:    serverAddress,
+		Handler: internal.RequestLogger(mux),
 	}
 
-	slog.Info("listen", "addr", addr)
+	slog.Info("listen", "addr", serverAddress)
 
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		slog.Error("listen", "error", err)
 		os.Exit(1)
 	}
-}
-
-func requestLogger(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		hostname, _ := os.Hostname()
-		slog.Info("request", "path", r.URL.Path, "hostname", hostname)
-		h.ServeHTTP(w, r)
-	})
 }

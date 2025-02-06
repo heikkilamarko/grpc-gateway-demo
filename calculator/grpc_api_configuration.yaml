@@ -3,10 +3,10 @@ config_version: 3
 
 http:
   rules:
-    - selector: calculator.Calculator.Add
+    - selector: calculator.v1.CalculatorService.Add
       post: /v1/calculator/add
       body: "*"
 
-    - selector: calculator.Calculator.Subtract
+    - selector: calculator.v1.CalculatorService.Subtract
       post: /v1/calculator/subtract
       body: "*"

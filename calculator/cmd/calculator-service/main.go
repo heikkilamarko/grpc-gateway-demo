@@ -1,7 +1,7 @@
 package main
 
 import (
-	"calculator-demo/internal/calculator"
+	"calculator-demo/internal/calculator/v1"
 	"log/slog"
 	"net"
 	"os"
@@ -20,7 +20,7 @@ func main() {
 
 	server := grpc.NewServer()
 
-	calculator.RegisterCalculatorServer(server, &calculatorServer{})
+	calculator.RegisterCalculatorServiceServer(server, &calculatorServer{})
 
 	slog.Info("listen", "addr", addr)
 

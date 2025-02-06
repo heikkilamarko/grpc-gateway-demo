@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "calculator.proto",
+    "title": "calculator/v1/calculator.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "Calculator"
+      "name": "CalculatorService"
     }
   ],
   "consumes": [
@@ -18,12 +18,12 @@
   "paths": {
     "/v1/calculator/add": {
       "post": {
-        "operationId": "Calculator_Add",
+        "operationId": "CalculatorService_Add",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/calculatorAddReply"
+              "$ref": "#/definitions/v1AddResponse"
             }
           },
           "default": {
@@ -39,23 +39,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/calculatorAddRequest"
+              "$ref": "#/definitions/v1AddRequest"
             }
           }
         ],
         "tags": [
-          "Calculator"
+          "CalculatorService"
         ]
       }
     },
     "/v1/calculator/subtract": {
       "post": {
-        "operationId": "Calculator_Subtract",
+        "operationId": "CalculatorService_Subtract",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/calculatorSubtractReply"
+              "$ref": "#/definitions/v1SubtractResponse"
             }
           },
           "default": {
@@ -71,61 +71,17 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/calculatorSubtractRequest"
+              "$ref": "#/definitions/v1SubtractRequest"
             }
           }
         ],
         "tags": [
-          "Calculator"
+          "CalculatorService"
         ]
       }
     }
   },
   "definitions": {
-    "calculatorAddReply": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "type": "number",
-          "format": "float"
-        }
-      }
-    },
-    "calculatorAddRequest": {
-      "type": "object",
-      "properties": {
-        "a": {
-          "type": "number",
-          "format": "float"
-        },
-        "b": {
-          "type": "number",
-          "format": "float"
-        }
-      }
-    },
-    "calculatorSubtractReply": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "type": "number",
-          "format": "float"
-        }
-      }
-    },
-    "calculatorSubtractRequest": {
-      "type": "object",
-      "properties": {
-        "a": {
-          "type": "number",
-          "format": "float"
-        },
-        "b": {
-          "type": "number",
-          "format": "float"
-        }
-      }
-    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -151,6 +107,50 @@
             "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
+        }
+      }
+    },
+    "v1AddRequest": {
+      "type": "object",
+      "properties": {
+        "a": {
+          "type": "number",
+          "format": "float"
+        },
+        "b": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "v1AddResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "v1SubtractRequest": {
+      "type": "object",
+      "properties": {
+        "a": {
+          "type": "number",
+          "format": "float"
+        },
+        "b": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "v1SubtractResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "number",
+          "format": "float"
         }
       }
     }
