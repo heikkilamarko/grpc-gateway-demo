@@ -1,7 +1,7 @@
 package main
 
 import (
-	"calculator-demo/proto/calculator"
+	"calculator-demo/internal/calculator"
 	"log/slog"
 	"net"
 	"os"

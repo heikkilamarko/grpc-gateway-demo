@@ -1,11 +1,11 @@
 module calculator-demo
 
-go 1.23.5
+go 1.23.6
 
 require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.0
 	google.golang.org/grpc v1.70.0
-	google.golang.org/protobuf v1.36.4
+	google.golang.org/protobuf v1.36.5
 )
 
 require (
