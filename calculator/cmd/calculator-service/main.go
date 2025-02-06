@@ -20,7 +20,7 @@ func main() {
 
 	server := grpc.NewServer()
 
-	calculator.RegisterCalculatorServiceServer(server, &calculatorServer{})
+	calculator.RegisterCalculatorServiceServer(server, &calculatorServiceServer{})
 
 	slog.Info("listen", "addr", addr)
 

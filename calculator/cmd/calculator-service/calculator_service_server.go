@@ -5,16 +5,16 @@ import (
 	"context"
 )
 
-type calculatorServer struct {
+type calculatorServiceServer struct {
 	calculator.UnimplementedCalculatorServiceServer
 }
 
-func (s *calculatorServer) Add(_ context.Context, req *calculator.AddRequest) (*calculator.AddResponse, error) {
+func (s *calculatorServiceServer) Add(_ context.Context, req *calculator.AddRequest) (*calculator.AddResponse, error) {
 	result := req.A + req.B
 	return &calculator.AddResponse{Result: result}, nil
 }
 
-func (s *calculatorServer) Subtract(_ context.Context, req *calculator.SubtractRequest) (*calculator.SubtractResponse, error) {
+func (s *calculatorServiceServer) Subtract(_ context.Context, req *calculator.SubtractRequest) (*calculator.SubtractResponse, error) {
 	result := req.A - req.B
 	return &calculator.SubtractResponse{Result: result}, nil
 }
