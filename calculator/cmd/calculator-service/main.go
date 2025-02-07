@@ -11,19 +11,23 @@ import (
 )
 
 func main() {
-	addr := os.Getenv("SERVER_ADDRESS")
+	var (
+		serverAddress = os.Getenv("SERVER_ADDRESS")
+		apiKeyName    = os.Getenv("API_KEY_NAME")
+		apiKey        = os.Getenv("API_KEY")
+	)
 
-	listener, err := net.Listen("tcp", addr)
+	listener, err := net.Listen("tcp", serverAddress)
 	if err != nil {
 		slog.Error("create listener", "error", err)
 		os.Exit(1)
 	}
 
-	server := grpc.NewServer()
+	server := grpc.NewServer(grpc.UnaryInterceptor(internal.NewApiKeyUnaryServerInterceptor(apiKeyName, apiKey)))
 
 	calculator.RegisterCalculatorServiceServer(server, &internal.CalculatorServiceServer{})
 
-	slog.Info("listen", "addr", addr)
+	slog.Info("listen", "addr", serverAddress)
 
 	if err := server.Serve(listener); err != nil {
 		slog.Error("listen", "error", err)
