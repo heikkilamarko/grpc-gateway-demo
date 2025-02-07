@@ -23,6 +23,7 @@ pipeline:
                   url: ${CALCULATOR_GATEWAY_ADDRESS}/v1/calculator/${!@calculator_operation}
                   verb: POST
                   headers:
+                    Api-Key: ${CALCULATOR_GATEWAY_API_KEY}
                     Content-Type: application/json
             result_map: |
               root.result = this.result

@@ -26,6 +26,7 @@ pipeline:
                   url: ${CALCULATOR_GATEWAY_ADDRESS}/v1/calculator/add
                   verb: POST
                   headers:
+                    Api-Key: ${CALCULATOR_GATEWAY_API_KEY}
                     Content-Type: application/json
             result_map: |
               root.results.add = this.result
@@ -39,6 +40,7 @@ pipeline:
                   url: ${CALCULATOR_GATEWAY_ADDRESS}/v1/calculator/subtract
                   verb: POST
                   headers:
+                    Api-Key: ${CALCULATOR_GATEWAY_API_KEY}
                     Content-Type: application/json
             result_map: |
               root.results.subtract = this.result

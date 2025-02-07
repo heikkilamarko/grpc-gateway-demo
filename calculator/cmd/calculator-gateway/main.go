@@ -15,13 +15,12 @@ import (
 
 func main() {
 	var (
-		serverAddress               = os.Getenv("SERVER_ADDRESS")
-		calculatorServiceAddress    = os.Getenv("CALCULATOR_SERVICE_ADDRESS")
-		calculatorServiceAPIKeyName = os.Getenv("CALCULATOR_SERVICE_API_KEY_NAME")
-		calculatorServiceAPIKey     = os.Getenv("CALCULATOR_SERVICE_API_KEY")
-		ctx                         = context.Background()
-		mux                         = runtime.NewServeMux(runtime.WithMetadata(internal.NewApiKeyMetadataAnnotator(calculatorServiceAPIKeyName, calculatorServiceAPIKey)))
-		opts                        = []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+		serverAddress            = os.Getenv("SERVER_ADDRESS")
+		apiKeyName               = os.Getenv("API_KEY_NAME")
+		calculatorServiceAddress = os.Getenv("CALCULATOR_SERVICE_ADDRESS")
+		ctx                      = context.Background()
+		mux                      = runtime.NewServeMux(runtime.WithMetadata(internal.NewApiKeyMetadataAnnotator(apiKeyName)))
+		opts                     = []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 	)
 
 	if err := calculator.RegisterCalculatorServiceHandlerFromEndpoint(ctx, mux, calculatorServiceAddress, opts); err != nil {

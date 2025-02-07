@@ -33,10 +33,12 @@ func NewApiKeyUnaryServerInterceptor(name string, apiKey string) grpc.UnaryServe
 	}
 }
 
-func NewApiKeyMetadataAnnotator(name string, apiKey string) func(context.Context, *http.Request) metadata.MD {
-	return func(context.Context, *http.Request) metadata.MD {
+func NewApiKeyMetadataAnnotator(name string) func(context.Context, *http.Request) metadata.MD {
+	return func(_ context.Context, r *http.Request) metadata.MD {
 		md := metadata.MD{}
-		md.Set(name, apiKey)
+		if apiKey := r.Header.Get(name); apiKey != "" {
+			md.Set(name, apiKey)
+		}
 		return md
 	}
 }
