@@ -1,23 +1,26 @@
 input:
   generate:
     mapping: root = {}
-    interval: 0/5 * * * * *
+    interval: 0/10 * * * * *
 
 pipeline:
+  threads: 1
   processors:
     - try:
         - mapping: |
-            root = this
-            root.a = random_int(timestamp_unix_nano(), 0, 100)
-            root.b = random_int(timestamp_unix_nano(), 0, 100)
+            root = file_rel("config.json").parse_json().calculations
+
+        - unarchive:
+            format: json_array
 
         - branch:
             request_map: |
+              meta calculator_operation = this.operation
               root.a = this.a
               root.b = this.b
             processors:
               - http:
-                  url: ${CALCULATOR_GATEWAY_ADDRESS}/v1/calculator/add
+                  url: ${CALCULATOR_GATEWAY_ADDRESS}/v1/calculator/${!@calculator_operation}
                   verb: POST
                   headers:
                     Content-Type: application/json
@@ -28,11 +31,11 @@ pipeline:
             request_map: root = this
             processors:
               - http:
-                  url: ${HTTPBIN_ADDRESS}/unstable
+                  url: ${HTTPBIN_ADDRESS}/unstable?failure_rate=0.1
                   verb: POST
                   headers:
                     Content-Type: application/json
-                  retries: 1
+                  retries: 0
 
     - mapping: |
         if errored() {

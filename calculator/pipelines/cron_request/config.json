@@ -1,0 +1,14 @@
+{
+  "calculations": [
+    {
+      "operation": "add",
+      "a": 100,
+      "b": 10
+    },
+    {
+      "operation": "subtract",
+      "a": 200,
+      "b": 20
+    }
+  ]
+}

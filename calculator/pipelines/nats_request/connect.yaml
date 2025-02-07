@@ -1,6 +1,7 @@
 input:
   nats:
-    urls: ["${NATS_ADDRESS}"]
+    urls:
+      - ${NATS_ADDRESS}
     subject: calculator.v1.*
     auto_replay_nacks: false
     send_ack: false
@@ -50,7 +51,8 @@ pipeline:
 
 output:
   nats:
-    urls: ["${NATS_ADDRESS}"]
+    urls:
+      - ${NATS_ADDRESS}
     subject: ${!@nats_reply_subject}
 
 http:
