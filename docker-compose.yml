@@ -67,6 +67,8 @@ services:
     depends_on:
       - calculator-gateway-1
       - calculator-gateway-2
+      - httpbin
+      - postgres
 
   calculator-pipeline-nats-request:
     image: calculator-pipeline-nats-request
@@ -77,9 +79,9 @@ services:
     networks:
       - grpc-gateway-demo
     depends_on:
-      - nats
       - calculator-gateway-1
       - calculator-gateway-2
+      - nats
 
   httpbin:
     image: mccutchen/go-httpbin
@@ -117,6 +119,30 @@ services:
     networks:
       - grpc-gateway-demo
 
+  tempo:
+    image: tempo
+    build: ./infra/tempo
+    restart: unless-stopped
+    volumes:
+      - tempo:/var/tempo
+    networks:
+      - grpc-gateway-demo
+    depends_on:
+      - prometheus
+
+  alloy:
+    image: alloy
+    build: ./infra/alloy
+    restart: unless-stopped
+    env_file:
+      - ./infra/env/alloy.env
+    volumes:
+      - alloy:/var/lib/alloy/data
+    networks:
+      - grpc-gateway-demo
+    depends_on:
+      - tempo
+
   grafana:
     image: grafana
     build: ./infra/grafana
@@ -130,18 +156,7 @@ services:
     depends_on:
       - postgres
       - prometheus
-
-  # Uncomment to enable prometheus remote write:
-  # alloy:
-  #   image: alloy
-  #   build: ./infra/alloy
-  #   restart: unless-stopped
-  #   env_file:
-  #     - ./infra/env/alloy.env
-  #   volumes:
-  #     - alloy:/var/lib/alloy/data
-  #   networks:
-  #     - grpc-gateway-demo
+      - tempo
 
   caddy:
     image: caddy
@@ -166,8 +181,8 @@ networks:
 volumes:
   postgres:
   prometheus:
+  tempo:
+  alloy:
   grafana:
-  # Uncomment to enable prometheus remote write:
-  # alloy:
   caddy_data:
   caddy_config:

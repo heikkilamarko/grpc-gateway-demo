@@ -65,4 +65,9 @@ logger:
   static_fields:
     service: calculator-pipeline-nats-request
 
+tracer:
+  open_telemetry_collector:
+    grpc:
+      - address: ${OPEN_TELEMETRY_COLLECTOR_GRPC_ADDRESS}
+
 shutdown_delay: 5s

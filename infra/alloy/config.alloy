@@ -1,19 +1,43 @@
-prometheus.remote_write "demo" {
-	endpoint {
-		url = env("PROMETHEUS_REMOTE_WRITE_ENDPOINT_URL")
+// prometheus.remote_write "demo" {
+// 	endpoint {
+// 		url = env("PROMETHEUS_REMOTE_WRITE_ENDPOINT_URL")
+// 	}
+// }
+
+// prometheus.scrape "demo" {
+// 	scrape_interval = "10s"
+
+// 	targets = [
+// 		{"__address__" = "caddy:8082"},
+// 		{"__address__" = "calculator-pipeline-http-request-1:8080"},
+// 		{"__address__" = "calculator-pipeline-http-request-2:8080"},
+// 		{"__address__" = "calculator-pipeline-cron-request:8080"},
+// 		{"__address__" = "calculator-pipeline-nats-request:8080"},
+// 	]
+
+// 	forward_to = [prometheus.remote_write.demo.receiver]
+// }
+
+otelcol.receiver.otlp "demo" {
+	grpc {
+		endpoint = "0.0.0.0:4317"
+	}
+
+	http {
+		endpoint = "0.0.0.0:4318"
+	}
+
+	output {
+		traces = [otelcol.exporter.otlp.demo.input]
 	}
 }
 
-prometheus.scrape "demo" {
-	scrape_interval = "10s"
+otelcol.exporter.otlp "demo" {
+	client {
+		endpoint = "tempo:4317"
 
-	targets = [
-		{"__address__" = "caddy:8082"},
-		{"__address__" = "calculator-pipeline-http-request-1:8080"},
-		{"__address__" = "calculator-pipeline-http-request-2:8080"},
-		{"__address__" = "calculator-pipeline-cron-request:8080"},
-		{"__address__" = "calculator-pipeline-nats-request:8080"},
-	]
-
-	forward_to = [prometheus.remote_write.demo.receiver]
+		tls {
+			insecure = true
+		}
+	}
 }
