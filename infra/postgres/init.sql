@@ -9,12 +9,12 @@ CREATE SCHEMA demo;
 CREATE TABLE demo.success_requests (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     data JSONB NOT NULL,
-    created_at timestamptz NOT NULL DEFAULT now()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE demo.error_requests (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     error_message TEXT,
     data JSONB NOT NULL,
-    created_at timestamptz NOT NULL DEFAULT now()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
