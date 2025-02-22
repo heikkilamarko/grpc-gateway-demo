@@ -7,13 +7,13 @@ CREATE DATABASE grpc_gateway_demo;
 CREATE SCHEMA demo;
 
 CREATE TABLE demo.success_requests (
-    id SERIAL PRIMARY KEY,
-     data JSONB NOT NULL,
-     created_at timestamptz NOT NULL DEFAULT now()
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    data JSONB NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE demo.error_requests (
-    id SERIAL PRIMARY KEY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     error_message TEXT,
     data JSONB NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now()
