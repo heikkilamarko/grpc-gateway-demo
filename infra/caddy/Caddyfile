@@ -3,9 +3,7 @@
 	auto_https off
 	skip_install_trust
 
-	servers {
-		metrics
-	}
+	metrics
 
 	log {
 		level {$LOG_LEVEL}
