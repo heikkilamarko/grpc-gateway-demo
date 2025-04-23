@@ -130,14 +130,10 @@ services:
     depends_on:
       - prometheus
 
-  alloy:
-    image: alloy
-    build: ./infra/alloy
+  otel-collector:
+    image: otel-collector
+    build: ./infra/otel-collector
     restart: unless-stopped
-    env_file:
-      - ./infra/env/alloy.env
-    volumes:
-      - alloy:/var/lib/alloy/data
     networks:
       - grpc-gateway-demo
     depends_on:
@@ -182,7 +178,6 @@ volumes:
   postgres:
   prometheus:
   tempo:
-  alloy:
   grafana:
   caddy_data:
   caddy_config:

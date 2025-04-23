@@ -29,13 +29,6 @@
 	handle @grafana {
 		reverse_proxy http://grafana:3000
 	}
-
-	@alloy {
-		path /alloy /alloy/*
-	}
-	handle @alloy {
-		reverse_proxy http://alloy:12345
-	}
 }
 
 :8081 {
