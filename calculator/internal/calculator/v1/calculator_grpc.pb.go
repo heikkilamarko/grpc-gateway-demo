@@ -26,8 +26,15 @@ const (
 // CalculatorServiceClient is the client API for CalculatorService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// CalculatorService provides basic arithmetic operations.
+// This service exposes RPC methods for mathematical calculations.
 type CalculatorServiceClient interface {
+	// Add performs addition of two numbers.
+	// Returns the sum of the two input values.
 	Add(ctx context.Context, in *AddRequest, opts ...grpc.CallOption) (*AddResponse, error)
+	// Subtract performs subtraction of two numbers.
+	// Returns the difference between the first and second input values (a - b).
 	Subtract(ctx context.Context, in *SubtractRequest, opts ...grpc.CallOption) (*SubtractResponse, error)
 }
 
@@ -62,8 +69,15 @@ func (c *calculatorServiceClient) Subtract(ctx context.Context, in *SubtractRequ
 // CalculatorServiceServer is the server API for CalculatorService service.
 // All implementations must embed UnimplementedCalculatorServiceServer
 // for forward compatibility.
+//
+// CalculatorService provides basic arithmetic operations.
+// This service exposes RPC methods for mathematical calculations.
 type CalculatorServiceServer interface {
+	// Add performs addition of two numbers.
+	// Returns the sum of the two input values.
 	Add(context.Context, *AddRequest) (*AddResponse, error)
+	// Subtract performs subtraction of two numbers.
+	// Returns the difference between the first and second input values (a - b).
 	Subtract(context.Context, *SubtractRequest) (*SubtractResponse, error)
 	mustEmbedUnimplementedCalculatorServiceServer()
 }

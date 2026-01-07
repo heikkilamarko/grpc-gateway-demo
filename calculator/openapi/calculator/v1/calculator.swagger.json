@@ -18,6 +18,7 @@
   "paths": {
     "/v1/calculator/add": {
       "post": {
+        "summary": "Add performs addition of two numbers.\nReturns the sum of the two input values.",
         "operationId": "CalculatorService_Add",
         "responses": {
           "200": {
@@ -36,6 +37,7 @@
         "parameters": [
           {
             "name": "body",
+            "description": "AddRequest contains the two operands for addition.",
             "in": "body",
             "required": true,
             "schema": {
@@ -50,6 +52,7 @@
     },
     "/v1/calculator/subtract": {
       "post": {
+        "summary": "Subtract performs subtraction of two numbers.\nReturns the difference between the first and second input values (a - b).",
         "operationId": "CalculatorService_Subtract",
         "responses": {
           "200": {
@@ -68,6 +71,7 @@
         "parameters": [
           {
             "name": "body",
+            "description": "SubtractRequest contains the two operands for subtraction.",
             "in": "body",
             "required": true,
             "schema": {
@@ -115,44 +119,54 @@
       "properties": {
         "a": {
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "description": "First operand for addition."
         },
         "b": {
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "description": "Second operand for addition."
         }
-      }
+      },
+      "description": "AddRequest contains the two operands for addition."
     },
     "v1AddResponse": {
       "type": "object",
       "properties": {
         "result": {
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "description": "The sum of the two input values."
         }
-      }
+      },
+      "description": "AddResponse contains the result of the addition operation."
     },
     "v1SubtractRequest": {
       "type": "object",
       "properties": {
         "a": {
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "description": "The minuend (value to subtract from)."
         },
         "b": {
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "description": "The subtrahend (value to be subtracted)."
         }
-      }
+      },
+      "description": "SubtractRequest contains the two operands for subtraction."
     },
     "v1SubtractResponse": {
       "type": "object",
       "properties": {
         "result": {
           "type": "number",
-          "format": "float"
+          "format": "float",
+          "description": "The difference between a and b (a - b)."
         }
-      }
+      },
+      "description": "SubtractResponse contains the result of the subtraction operation."
     }
   }
 }

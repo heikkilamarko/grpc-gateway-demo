@@ -2,25 +2,44 @@ syntax = "proto3";
 
 package calculator.v1;
 
+// CalculatorService provides basic arithmetic operations.
+// This service exposes RPC methods for mathematical calculations.
 service CalculatorService {
+  // Add performs addition of two numbers.
+  // Returns the sum of the two input values.
   rpc Add(AddRequest) returns (AddResponse) {}
+
+  // Subtract performs subtraction of two numbers.
+  // Returns the difference between the first and second input values (a - b).
   rpc Subtract(SubtractRequest) returns (SubtractResponse) {}
 }
 
+// AddRequest contains the two operands for addition.
 message AddRequest {
+  // First operand for addition.
   float a = 1;
+
+  // Second operand for addition.
   float b = 2;
 }
 
+// AddResponse contains the result of the addition operation.
 message AddResponse {
+  // The sum of the two input values.
   float result = 1;
 }
 
+// SubtractRequest contains the two operands for subtraction.
 message SubtractRequest {
+  // The minuend (value to subtract from).
   float a = 1;
+
+  // The subtrahend (value to be subtracted).
   float b = 2;
 }
 
+// SubtractResponse contains the result of the subtraction operation.
 message SubtractResponse {
+  // The difference between a and b (a - b).
   float result = 1;
 }
